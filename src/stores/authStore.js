@@ -3,7 +3,7 @@ import { defineStore } from 'pinia';
 import axios from 'axios';
 
 // Your Express backend URL
-const API_URL = 'http://localhost:5000/api/auth';
+const API_URL = 'https://ecommerce-backend-fqtt.onrender.com/api/auth';
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
@@ -53,7 +53,7 @@ export const useAuthStore = defineStore('auth', {
       this.error = null;
       try {
         // Send the Google token to our new backend route
-        const response = await axios.post('http://localhost:5000/api/auth/google', {
+        const response = await axios.post('https://ecommerce-backend-fqtt.onrender.com/auth/google', {
           token: googleToken
         });
         

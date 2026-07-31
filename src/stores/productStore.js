@@ -2,7 +2,7 @@
 import { defineStore } from 'pinia';
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api/products';
+const API_URL = 'https://ecommerce-backend-fqtt.onrender.com/api/products';
 
 export const useProductStore = defineStore('product', {
   state: () => ({
