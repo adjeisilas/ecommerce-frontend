@@ -5,7 +5,7 @@
     <div class="hidden sm:flex justify-between text-xs text-gray-500 mb-2">
       <span></span>
       <div class="flex gap-6">
-        <a href="#" class="hover:text-black">About Ecomora</a>
+        <a href="#" class="hover:text-black">About ADSTORE</a>
         <a href="#" class="hover:text-black">Help & Support</a>
         <router-link to="/signin" v-if="!authStore.user" class="hover:text-black font-semibold text-black">Sign Up / Sign In</router-link>
         <template v-else>
@@ -20,7 +20,7 @@
     <div class="flex items-center justify-between gap-4 py-2">
       <!-- Logo -->
       <router-link to="/" class="flex items-center gap-2 font-bold text-xl sm:text-2xl">
-        <span class="text-2xl sm:text-3xl">🍃</span> Ecomora
+        <span class="text-2xl sm:text-3xl">🍃</span> ADSTORE
       </router-link>
 
       <!-- Desktop Category Select & Search Bar -->
