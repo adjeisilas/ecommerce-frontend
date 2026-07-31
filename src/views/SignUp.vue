@@ -6,8 +6,8 @@
       <div class="relative hidden w-1/2 p-4 md:block">
         <div class="h-full w-full overflow-hidden rounded-2xl bg-gray-200 relative">
           <img 
-            src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?q=80&w=1000&auto=format&fit=crop" 
-            alt="Interior" 
+            src="/images/SignUp Image.jpg" 
+            alt="Sign Up Image" 
             class="h-full w-full object-cover"
           />
           <div class="absolute top-6 left-6 flex items-center gap-2 text-white font-bold text-xl">
