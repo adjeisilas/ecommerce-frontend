@@ -65,7 +65,7 @@
         <div v-for="product in productStore.products" :key="product._id" class="group relative rounded-2xl border border-gray-100 bg-white p-4 shadow-sm transition hover:shadow-md flex flex-col justify-between">
           <div>
             <div class="relative mb-4 flex h-48 items-center justify-center overflow-hidden">
-              <img :src="product.image.startsWith('http') ? product.image : `http://localhost:5000${product.image}`" :alt="product.name" class="h-full w-full object-cover rounded-xl transition group-hover:scale-105" />
+              <img :src="product.image.startsWith('http') ? product.image : `${import.meta.env.VITE_API_URL || 'https://ecommerce-backend-fqtt.onrender.com'}${product.image}`" :alt="product.name" class="h-full w-full object-cover rounded-xl transition group-hover:scale-105" />
             </div>
             <h3 class="font-semibold text-gray-800 text-sm line-clamp-1">{{ product.name }}</h3>
             <div class="mt-2 flex items-baseline gap-2">
