@@ -39,20 +39,22 @@
       </div>
     </section>
 
-    
-
-    <!-- Todays For You! Tab Filter Section -->
-    <section class="mx-auto max-w-7xl px-4 sm:px-8 py-8 mb-16">
-      <div class="mb-6 flex flex-wrap items-center justify-between gap-4">
-        <h2 class="text-2xl font-bold">Todays For You!</h2>
-        <div class="flex gap-2 bg-white p-1 rounded-full border border-gray-200 shadow-sm overflow-x-auto">
-          <button v-for="tab in ['Best Seller', 'Keep Stylish', 'Special Discount', 'Official Store']" :key="tab" class="px-4 py-1.5 text-xs font-semibold rounded-full transition hover:bg-black hover:text-white whitespace-nowrap">
-            {{ tab }}
-          </button>
+    <!-- Flash Sale Section with Dynamic Timer -->
+    <section class="mx-auto max-w-7xl px-4 sm:px-8 py-8">
+      <div class="mb-6 flex flex-wrap items-center justify-between gap-4 bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
+        <div class="flex items-center gap-3">
+          <span class="text-xl">⚡</span>
+          <h2 class="text-lg font-bold">Flash Sale</h2>
+          <!-- Dynamic Time Countdown -->
+          <div class="flex items-center gap-1 text-xs font-bold text-white bg-red-500 px-3 py-1 rounded-full">
+            <span>{{ hours }}</span> : <span>{{ minutes }}</span> : <span>{{ seconds }}</span>
+          </div>
+        </div>
+        <div class="flex gap-2">
+          <button class="h-8 w-8 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-100">←</button>
+          <button class="h-8 w-8 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-100">→</button>
         </div>
       </div>
-      <!-- Flash Sale Section with Dynamic Timer -->
-    <section class="mx-auto max-w-7xl px-4 sm:px-8 py-8">
 
       <!-- Loading State -->
       <div v-if="productStore.loading" class="text-center py-12 text-gray-500">Loading products...</div>
@@ -65,7 +67,11 @@
         <div v-for="product in productStore.products" :key="product._id" class="group relative rounded-2xl border border-gray-100 bg-white p-4 shadow-sm transition hover:shadow-md flex flex-col justify-between">
           <div>
             <div class="relative mb-4 flex h-48 items-center justify-center overflow-hidden">
-              <img :src="product.image.startsWith('http') ? product.image : `${import.meta.env.VITE_API_URL || 'https://ecommerce-backend-fqtt.onrender.com'}${product.image}`" :alt="product.name" class="h-full w-full object-cover rounded-xl transition group-hover:scale-105" />
+              <span class="absolute top-1 right-1 text-gray-400 hover:text-red-500 cursor-pointer z-10">🤍</span>
+              
+              <!-- CLEANED UP IMAGE TAG -->
+              <img :src="getImageUrl(product.image)" :alt="product.name" class="h-full w-full object-cover rounded-xl transition group-hover:scale-105" />
+            
             </div>
             <h3 class="font-semibold text-gray-800 text-sm line-clamp-1">{{ product.name }}</h3>
             <div class="mt-2 flex items-baseline gap-2">
@@ -88,9 +94,18 @@
         No products found. Add products from the Admin dashboard to see them here!
       </div>
     </section>
-    </section>
 
-    
+    <!-- Todays For You! Tab Filter Section -->
+    <section class="mx-auto max-w-7xl px-4 sm:px-8 py-8 mb-16">
+      <div class="mb-6 flex flex-wrap items-center justify-between gap-4">
+        <h2 class="text-2xl font-bold">Todays For You!</h2>
+        <div class="flex gap-2 bg-white p-1 rounded-full border border-gray-200 shadow-sm overflow-x-auto">
+          <button v-for="tab in ['Best Seller', 'Keep Stylish', 'Special Discount', 'Official Store']" :key="tab" class="px-4 py-1.5 text-xs font-semibold rounded-full transition hover:bg-black hover:text-white whitespace-nowrap">
+            {{ tab }}
+          </button>
+        </div>
+      </div>
+    </section>
   </div>
 </template>
 
@@ -102,6 +117,14 @@ import { useCartStore } from '../stores/cartStore';
 
 const productStore = useProductStore();
 const cartStore = useCartStore();
+
+// HELPER FUNCTION FOR IMAGE URLs
+const getImageUrl = (imagePath) => {
+  if (!imagePath) return '';
+  if (imagePath.startsWith('http')) return imagePath;
+  const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+  return `${baseUrl}${imagePath}`;
+};
 
 // Dynamic Countdown timer reactive states
 const hours = ref('08');
