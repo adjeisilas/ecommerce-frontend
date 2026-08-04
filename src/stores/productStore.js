@@ -24,27 +24,27 @@ export const useProductStore = defineStore('product', {
       }
     },
     
-    async addProduct(formData) {
-      this.loading = true;
-      this.error = null;
-      try {
-        const token = localStorage.getItem('token');
-        const config = {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            Authorization: `Bearer ${token}`
-          }
-        };
-
-        const response = await axios.post(`${API_URL}/products`, formData, config);
-        this.products.push(response.data);
-        this.loading = false;
-        return true;
-      } catch (err) {
-        this.loading = false;
-        this.error = err.response?.data?.message || 'Failed to add product';
-        return false;
-      }
-    }
+   async addProduct(formData) {
+  this.loading = true;
+  this.error = null;
+  try {
+    const authStore = useAuthStore();
+    const config = {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        Authorization: `Bearer ${authStore.token}`, // CRUCIAL: Must include Bearer token
+      },
+    };
+    const response = await axios.post(`${API_URL}/products`, formData, config);
+    this.products.push(response.data);
+    return true;
+  } catch (err) {
+    this.error = err.response?.data?.message || 'Failed to create product';
+    return false;
+  } finally {
+    this.loading = false;
+  }
+}
+    
   }
 });
