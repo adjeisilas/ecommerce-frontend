@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import axios from 'axios';
 
-const API_URL = 'https://ecommerce-backend-fqtt.onrender.com/api/orders';
+const API_URL =  import.meta.env.VITE_API_URL;
 
 export const useOrderStore = defineStore('order', {
   state: () => ({

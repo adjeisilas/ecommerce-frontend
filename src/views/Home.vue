@@ -98,7 +98,7 @@ const cartStore = useCartStore();
 const getImageUrl = (imagePath) => {
   if (!imagePath) return '';
   if (imagePath.startsWith('http')) return imagePath;
-  const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+  const baseUrl = import.meta.env.API_URL;
   return `${baseUrl}${imagePath}`;
 };
 

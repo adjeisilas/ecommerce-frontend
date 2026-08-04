@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import axios from 'axios';
 
-const API_URL = 'https://ecommerce-backend-fqtt.onrender.com/api/products';
+const API_URL =  import.meta.env.VITE_API_URL;
 
 export const useProductStore = defineStore('product', {
   state: () => ({
@@ -15,7 +15,7 @@ export const useProductStore = defineStore('product', {
       this.loading = true;
       this.error = null;
       try {
-        const response = await axios.get(API_URL);
+        const response = await axios.get(`${API_URL}/products`);
         this.products = response.data;
       } catch (err) {
         this.error = err.response?.data?.message || 'Failed to fetch products';
@@ -36,7 +36,7 @@ export const useProductStore = defineStore('product', {
           }
         };
 
-        const response = await axios.post(API_URL, formData, config);
+        const response = await axios.post(`${API_URL}/products`, formData, config);
         this.products.push(response.data);
         this.loading = false;
         return true;

@@ -120,7 +120,7 @@ const newProduct = reactive({
 const getImageUrl = (imagePath) => {
   if (!imagePath) return '';
   if (imagePath.startsWith('http')) return imagePath;
-  const baseUrl = import.meta.env.VITE_API_URL || 'https://ecommerce-backend-fqtt.onrender.com';
+  const baseUrl = import.meta.env.API_URL;
   return `${baseUrl}${imagePath}`;
 };
 
