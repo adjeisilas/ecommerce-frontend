@@ -1,9 +1,7 @@
-<!-- src/views/Home.vue -->
 <template>
   <div class="min-h-screen bg-gray-50 font-sans text-gray-900">
     <Navbar />
 
-    <!-- Promotional Banner Section with Real Images -->
     <section class="mx-auto max-w-7xl px-4 sm:px-8 py-6">
       <div class="relative overflow-hidden rounded-3xl bg-[#f4f0ec] px-6 sm:px-12 py-10 sm:py-12 flex items-center justify-between shadow-sm">
         <div class="max-w-lg z-10">
@@ -15,7 +13,6 @@
           </button>
         </div>
 
-        <!-- Real Image Cards in Hero Banner -->
         <div class="hidden md:flex gap-4 items-center z-10">
           <div class="h-52 w-36 bg-white rounded-2xl shadow-xl p-2 rotate-[-6deg] overflow-hidden transition hover:rotate-0">
             <img src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=300&auto=format&fit=crop&q=80" alt="Style Trend" class="h-full w-full object-cover rounded-xl" />
@@ -27,7 +24,6 @@
       </div>
     </section>
 
-    <!-- Category Quick Links Bar with Real Pictures -->
     <section class="mx-auto max-w-7xl px-4 sm:px-8 py-6">
       <div class="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-9 gap-4 text-center">
         <div v-for="cat in categories" :key="cat.name" class="flex flex-col items-center group cursor-pointer">
@@ -41,7 +37,6 @@
 
     
 
-    <!-- Todays For You! Tab Filter Section -->
     <section class="mx-auto max-w-7xl px-4 sm:px-8 py-8 mb-16">
       <div class="mb-6 flex flex-wrap items-center justify-between gap-4">
         <h2 class="text-2xl font-bold">Todays For You!</h2>
@@ -55,19 +50,15 @@
       <section class="mx-auto max-w-7xl px-4 sm:px-8 py-8">
       
 
-      <!-- Loading State -->
       <div v-if="productStore.loading" class="text-center py-12 text-gray-500">Loading products...</div>
       
-      <!-- Error State -->
       <div v-else-if="productStore.error" class="text-center py-12 text-red-500">{{ productStore.error }}</div>
 
-      <!-- Products Grid -->
       <div v-else-if="productStore.products.length > 0" class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-5">
         <div v-for="product in productStore.products" :key="product._id" class="group relative rounded-2xl border border-gray-100 bg-white p-4 shadow-sm transition hover:shadow-md flex flex-col justify-between">
           <div>
             <div class="relative mb-4 flex h-48 items-center justify-center overflow-hidden">
-              
-              <!-- CLEANED UP IMAGE TAG -->
+         
               <img :src="getImageUrl(product.image)" :alt="product.name" class="h-full w-full object-cover rounded-xl transition group-hover:scale-105" />
             
             </div>
@@ -87,7 +78,6 @@
         </div>
       </div>
 
-      <!-- Empty State -->
       <div v-else class="text-center py-12 text-gray-500 bg-white rounded-2xl border border-gray-100">
         No products found. Add products from the Admin dashboard to see them here!
       </div>
@@ -105,7 +95,6 @@ import { useCartStore } from '../stores/cartStore';
 const productStore = useProductStore();
 const cartStore = useCartStore();
 
-// HELPER FUNCTION FOR IMAGE URLs
 const getImageUrl = (imagePath) => {
   if (!imagePath) return '';
   if (imagePath.startsWith('http')) return imagePath;
@@ -113,7 +102,6 @@ const getImageUrl = (imagePath) => {
   return `${baseUrl}${imagePath}`;
 };
 
-// Dynamic Countdown timer reactive states
 const hours = ref('08');
 const minutes = ref('17');
 const seconds = ref('56');
@@ -134,7 +122,6 @@ const categories = [
 onMounted(() => {
   productStore.fetchProducts();
 
-  // Start real-time ticking countdown from 8 hours, 17 mins, 56 secs
   let totalSeconds = 8 * 3600 + 17 * 60 + 56;
 
   countdownInterval = setInterval(() => {

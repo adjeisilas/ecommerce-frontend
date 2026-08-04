@@ -1,8 +1,6 @@
-// src/stores/authStore.js
 import { defineStore } from 'pinia';
 import axios from 'axios';
 
-// Your Express backend URL
 const API_URL = 'https://ecommerce-backend-fqtt.onrender.com/api/auth';
 
 export const useAuthStore = defineStore('auth', {

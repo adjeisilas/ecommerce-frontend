@@ -1,6 +1,5 @@
 <template>
   <div class="min-h-screen bg-gray-50 font-sans">
-    <!-- Top Navigation -->
     <header class="flex items-center justify-between border-b bg-white px-8 py-4">
       <div class="flex items-center gap-2 font-bold text-xl">
         <span class="text-2xl">🍃</span> Ecomora
@@ -18,7 +17,6 @@
       </div>
     </header>
 
-    <!-- Main Content -->
     <main class="mx-auto max-w-7xl p-8">
       <div class="mb-6 flex items-center justify-between">
         <h1 class="text-3xl font-semibold">Products</h1>
@@ -27,21 +25,22 @@
         </button>
       </div>
 
-      <!-- Loading & Error States -->
       <div v-if="productStore.loading" class="text-center py-10 text-gray-500">Loading products...</div>
       <div v-if="productStore.error" class="text-center py-10 text-red-500">{{ productStore.error }}</div>
 
-      <!-- Products Grid (Real Data) -->
       <div v-if="!productStore.loading && productStore.products.length > 0" class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
         <div v-for="product in productStore.products" :key="product._id" class="group relative cursor-pointer rounded-2xl border border-gray-100 bg-white p-4 shadow-sm transition hover:shadow-md">
           <div class="mb-4 flex h-40 items-center justify-center rounded-xl bg-gray-50 p-4 overflow-hidden">
-            <img :src="product.image.startsWith('http') ? product.image : `http://localhost:5000${product.image}`" :alt="product.name" class="max-h-full object-cover rounded-lg" />
+            
+            <!-- FIXED IMAGE TAG -->
+            <img :src="getImageUrl(product.image)" :alt="product.name" class="max-h-full object-cover rounded-lg" />
+          
           </div>
           <h3 class="truncate font-semibold text-gray-800">{{ product.name }}</h3>
           <p class="text-sm font-medium text-gray-500">GH₵{{ product.price.toFixed(2) }}</p>
           <div class="mt-3 flex items-center justify-between text-xs text-gray-400">
             <span>Stock: {{ product.stock }}</span>
-            <span>Sold: {{ product.sold }}</span>
+            <span>Sold: {{ product.sold || 0 }}</span>
           </div>
         </div>
       </div>
@@ -51,7 +50,7 @@
       </div>
     </main>
 
-    <!-- Add Product Modal -->
+    <!-- Modal Form -->
     <div v-if="showAddModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div class="w-full max-w-md rounded-2xl bg-white p-8 shadow-xl">
         <h2 class="mb-6 text-2xl font-bold">Add New Product</h2>
@@ -64,7 +63,7 @@
           
           <div class="flex gap-4">
             <div class="w-1/2">
-              <label class="block text-sm font-medium text-gray-700">Price ($)</label>
+              <label class="block text-sm font-medium text-gray-700">Price (GH₵)</label>
               <input v-model="newProduct.price" type="number" step="0.01" required class="mt-1 w-full rounded-lg border px-4 py-2 focus:border-black focus:outline-none" />
             </div>
             <div class="w-1/2">
@@ -108,7 +107,7 @@ const productStore = useProductStore();
 const authStore = useAuthStore();
 
 const showAddModal = ref(false);
-const imageFile = ref(null); // Stores the actual image file
+const imageFile = ref(null); 
 
 const newProduct = reactive({
   name: '',
@@ -117,18 +116,23 @@ const newProduct = reactive({
   category: ''
 });
 
-// Fetch products when the dashboard loads
+// HELPER FUNCTION FOR IMAGE URLs
+const getImageUrl = (imagePath) => {
+  if (!imagePath) return '';
+  if (imagePath.startsWith('http')) return imagePath;
+  const baseUrl = import.meta.env.VITE_API_URL || 'https://ecommerce-backend-fqtt.onrender.com';
+  return `${baseUrl}${imagePath}`;
+};
+
 onMounted(() => {
   productStore.fetchProducts();
 });
 
-// Capture the file when the user selects it
 const handleFileChange = (e) => {
   imageFile.value = e.target.files[0];
 };
 
 const handleAddProduct = async () => {
-  // Use FormData to package the file and text data together
   const formData = new FormData();
   formData.append('name', newProduct.name);
   formData.append('price', newProduct.price);
@@ -143,12 +147,11 @@ const handleAddProduct = async () => {
   
   if (success) {
     showAddModal.value = false;
-    // Reset form
     newProduct.name = '';
     newProduct.price = '';
     newProduct.stock = '';
     newProduct.category = '';
-    imageFile.value = null; // Reset file
+    imageFile.value = null; 
   }
 };
 

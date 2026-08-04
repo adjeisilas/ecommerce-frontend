@@ -1,4 +1,3 @@
-// src/stores/orderStore.js
 import { defineStore } from 'pinia';
 import axios from 'axios';
 
@@ -6,7 +5,7 @@ const API_URL = 'https://ecommerce-backend-fqtt.onrender.com/api/orders';
 
 export const useOrderStore = defineStore('order', {
   state: () => ({
-    orders: [], // Added to hold past orders
+    orders: [], 
     loading: false,
     error: null,
   }),
@@ -29,7 +28,6 @@ export const useOrderStore = defineStore('order', {
       }
     },
 
-    // New action to fetch user's past orders
     async fetchMyOrders() {
       this.loading = true;
       this.error = null;

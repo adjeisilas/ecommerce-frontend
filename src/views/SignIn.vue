@@ -2,7 +2,6 @@
   <div class="flex min-h-screen items-center justify-center bg-[#5c4d43] p-6">
     <div class="flex w-full max-w-5xl overflow-hidden rounded-[2rem] bg-[#fbf9f4] shadow-2xl">
       
-      <!-- Left: Image Section -->
       <div class="relative hidden w-1/2 p-4 md:block">
         <div class="h-full w-full overflow-hidden rounded-2xl bg-gray-200 relative">
           <img 
@@ -13,7 +12,6 @@
           <div class="absolute top-6 left-6 flex items-center gap-2 text-white font-bold text-xl">
             <span class="text-orange-500 text-2xl">🛋️</span> ADSTORE
           </div>
-          <!-- Glassmorphism Quote Box -->
           <div class="absolute bottom-6 left-6 right-6 rounded-xl border border-white/20 bg-white/10 p-6 backdrop-blur-md">
             <p class="text-sm text-white/90">"Shop with confidence through a fast, secure, and seamless experience. Discover great deals and enjoy a smooth checkout every time."</p>
             <div class="mt-4 text-white">
@@ -24,7 +22,6 @@
         </div>
       </div>
 
-      <!-- Right: Form Section -->
       <div class="flex w-full flex-col justify-center p-12 md:w-1/2">
         <div class="mx-auto w-full max-w-md">
           <h2 class="mb-2 text-3xl font-bold text-gray-900">Sign In</h2>
@@ -56,9 +53,6 @@
             <div class="h-px flex-grow bg-gray-300"></div>
           </div>
 
-          <!-- Inside src/views/Signin.vue, add this right below the <h2>Sign In</h2> tag -->
-
-        <!-- Google Login Button -->
         <div class="flex justify-center mb-6">
           <GoogleLogin :callback="handleGoogleLogin" />
         </div>
@@ -89,7 +83,6 @@ const formData = reactive({
 const handleSignIn = async () => {
   const success = await authStore.login(formData);
   if (success) {
-    // If the user is an admin, redirect to admin dashboard, else home
     if (authStore.user?.role === 'admin') {
       router.push('/admin');
     } else {
@@ -97,9 +90,8 @@ const handleSignIn = async () => {
     }
   }
 };
-// Add this to your script setup in Signin.vue
+
 const handleGoogleLogin = async (response) => {
-  // response.credential contains the Google ID Token
   const success = await authStore.loginWithGoogle(response.credential);
   if (success) {
     router.push('/');

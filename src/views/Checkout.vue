@@ -1,11 +1,10 @@
-<!-- src/views/Checkout.vue -->
 <template>
   <div class="min-h-screen bg-gray-50 font-sans p-8">
     <div class="mx-auto max-w-6xl">
       <h1 class="text-3xl font-bold text-gray-800 mb-8">Checkout</h1>
 
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <!-- Left Column: Shipping Form -->
+
         <div class="lg:col-span-2 bg-white p-8 rounded-2xl shadow-sm">
           <h2 class="text-xl font-bold mb-6">Shipping Address</h2>
           
@@ -39,7 +38,7 @@
           </form>
         </div>
 
-        <!-- Right Column: Order Summary -->
+
         <div class="bg-white p-8 rounded-2xl shadow-sm h-fit">
           <h2 class="text-xl font-bold mb-6">Order Summary</h2>
           
@@ -82,7 +81,6 @@ const shipping = reactive({
   country: ''
 });
 
-// Protect the route: if user isn't logged in, send them to sign in
 onMounted(() => {
   if (!authStore.user) {
     router.push('/signin');
@@ -93,26 +91,25 @@ onMounted(() => {
 });
 
 const handlePlaceOrder = async () => {
-  // Format the data exactly how our Express model expects it
   const orderData = {
     orderItems: cartStore.items.map(item => ({
       name: item.name,
       quantity: item.quantity,
       image: item.image,
       price: item.price,
-      product: item._id // Link to the original product ID
+      product: item._id 
     })),
     shippingAddress: shipping,
-    paymentMethod: 'Card', // Hardcoded for now
+    paymentMethod: 'Card', 
     totalPrice: cartStore.totalPrice
   };
 
   const savedOrder = await orderStore.createOrder(orderData);
 
   if (savedOrder) {
-    alert('Order placed successfully! 🚀');
-    cartStore.clearCart(); // Empty the cart
-    router.push('/'); // Send them back to the home page
+    alert('Order placed successfully! ');
+    cartStore.clearCart(); 
+    router.push('/'); 
   }
 };
 </script>

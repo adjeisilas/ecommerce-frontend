@@ -1,4 +1,3 @@
-<!-- src/views/Cart.vue -->
 <template>
   <div class="min-h-screen bg-gray-50 font-sans p-8">
     <div class="mx-auto max-w-4xl bg-white p-8 rounded-2xl shadow-sm">
@@ -7,12 +6,10 @@
         <router-link to="/" class="text-sm font-medium text-blue-600 hover:underline">← Continue Shopping</router-link>
       </div>
 
-      <!-- Empty Cart State -->
       <div v-if="cartStore.items.length === 0" class="text-center py-12 text-gray-500">
         Your cart is empty.
       </div>
 
-      <!-- Cart Items -->
       <div v-else>
         <div class="divide-y divide-gray-100">
           <div v-for="item in cartStore.items" :key="item._id" class="py-6 flex items-center justify-between">
@@ -25,7 +22,6 @@
             </div>
             
             <div class="flex items-center gap-6">
-              <!-- Quantity Controls -->
               <div class="flex items-center rounded-lg border border-gray-200">
                 <button @click="cartStore.updateQuantity(item._id, item.quantity - 1)" class="px-3 py-1 hover:bg-gray-50">-</button>
                 <span class="px-3 py-1 text-sm font-medium border-x border-gray-200">{{ item.quantity }}</span>
@@ -34,13 +30,11 @@
               
               <p class="font-bold w-20 text-right">GH₵{{ (item.price * item.quantity).toFixed(2) }}</p>
               
-              <!-- Remove Button -->
               <button @click="cartStore.removeFromCart(item._id)" class="text-red-400 hover:text-red-600">🗑️</button>
             </div>
           </div>
         </div>
 
-        <!-- Cart Summary -->
         <div class="mt-8 border-t border-gray-100 pt-8 flex justify-end">
           <div class="w-72">
             <div class="flex justify-between text-lg font-bold mb-6">

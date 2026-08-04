@@ -1,14 +1,11 @@
-// src/stores/cartStore.js
 import { defineStore } from 'pinia';
 
 export const useCartStore = defineStore('cart', {
   state: () => ({
-    // Load cart from local storage if it exists, otherwise start empty
     items: JSON.parse(localStorage.getItem('cart')) || [],
   }),
   
   getters: {
-    // Calculate total number of items
     totalItems: (state) => state.items.reduce((total, item) => total + item.quantity, 0),
     
     // Calculate total price
@@ -17,13 +14,11 @@ export const useCartStore = defineStore('cart', {
   
   actions: {
     addToCart(product) {
-      // Check if product is already in the cart
       const existingItem = this.items.find(item => item._id === product._id);
       
       if (existingItem) {
         existingItem.quantity += 1;
       } else {
-        // Add new product with a quantity of 1
         this.items.push({ ...product, quantity: 1 });
       }
       this.saveCart();
@@ -45,7 +40,6 @@ export const useCartStore = defineStore('cart', {
     },
     
     saveCart() {
-      // Persist to local storage
       localStorage.setItem('cart', JSON.stringify(this.items));
     },
     
