@@ -44,6 +44,30 @@ export const useProductStore = defineStore('product', {
   } finally {
     this.loading = false;
   }
+},
+
+async deleteProduct(productId) {
+  this.error = null;
+  try {
+    const authStore = useAuthStore();
+    const config = {
+      headers: {
+        Authorization: `Bearer ${authStore.token}`,
+      },
+    };
+
+    // Send DELETE request to backend
+    await axios.delete(`${API_URL}/products/${productId}`, config);
+    
+    // Remove the product from the local state array immediately
+    this.products = this.products.filter((product) => product._id !== productId);
+    
+    return true;
+  } catch (err) {
+    console.error("Delete Error:", err);
+    this.error = err.response?.data?.message || 'Failed to delete product';
+    return false;
+  }
 }
     
   }

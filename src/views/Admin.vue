@@ -42,6 +42,12 @@
             <span>Stock: {{ product.stock }}</span>
             <span>Sold: {{ product.sold || 0 }}</span>
           </div>
+<button 
+  @click="handleDelete(product._id)" 
+  class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+>
+  Delete
+</button>
         </div>
       </div>
       
@@ -152,6 +158,17 @@ const handleAddProduct = async () => {
     newProduct.stock = '';
     newProduct.category = '';
     imageFile.value = null; 
+  }
+};
+
+const handleDelete = async (id) => {
+  if (confirm('Are you sure you want to delete this product?')) {
+    const success = await productStore.deleteProduct(id);
+    if (success) {
+      alert('Product deleted!');
+    } else {
+      alert(productStore.error);
+    }
   }
 };
 
