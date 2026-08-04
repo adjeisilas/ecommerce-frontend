@@ -5,7 +5,7 @@
       <div class="relative hidden w-1/2 p-4 md:block">
         <div class="h-full w-full overflow-hidden rounded-2xl bg-gray-200 relative">
           <img 
-            src="/images/SignUp Image.jpg" 
+            src="/images/signup-image.jpg" 
             alt="Sign Up Image" 
             class="h-full w-full object-cover"
           />
@@ -65,7 +65,7 @@
           </div>
 
         <div class="flex justify-center mb-6">
-          <GoogleLogin :callback="handleGoogleLogin" />
+          <GoogleAuthButton :callback="handleGoogleSignUp" />
         </div>
 
         
@@ -81,29 +81,38 @@
 <script setup>
 import { reactive } from 'vue';
 import { useRouter } from 'vue-router';
+import GoogleAuthButton from '../components/GoogleAuthButton.vue';
 import { useAuthStore } from '../stores/authStore';
 
 const router = useRouter();
 const authStore = useAuthStore();
 
 const formData = reactive({
-  firstName: '',
-  lastName: '',
+  name: '',
   email: '',
   password: ''
 });
 
+const redirectUser = () => {
+  if (authStore.user?.role === 'admin') {
+    router.push('/admin');
+  } else {
+    router.push('/');
+  }
+};
+
 const handleSignUp = async () => {
   const success = await authStore.register(formData);
   if (success) {
-    router.push('/'); 
+    redirectUser();
   }
 };
 
 const handleGoogleSignUp = async (response) => {
-  const success = await authStore.registerWithGoogle(response.credential);
+  const credential = response.credential || response;
+  const success = await authStore.loginWithGoogle(credential);
   if (success) {
-    router.push('/');
+    redirectUser();
   }
 };
 </script>

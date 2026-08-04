@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
@@ -13,7 +13,7 @@ export const useAuthStore = defineStore('auth', {
     async register(userData) {
       this.error = null;
       try {
-        const response = await axios.post(`${API_URL}/signup`, userData);
+        const response = await axios.post(`${API_URL}/auth/signup`, userData);
         this.user = response.data;
         this.token = response.data.token;
         localStorage.setItem('user', JSON.stringify(this.user));
@@ -27,7 +27,7 @@ export const useAuthStore = defineStore('auth', {
     async login(credentials) {
       this.error = null;
       try {
-        const response = await axios.post(`${API_URL}/signin`, credentials);
+        const response = await axios.post(`${API_URL}/auth/signin`, credentials);
         this.user = response.data;
         this.token = response.data.token;
         localStorage.setItem('user', JSON.stringify(this.user));
@@ -44,27 +44,27 @@ export const useAuthStore = defineStore('auth', {
       localStorage.removeItem('user');
       localStorage.removeItem('token');
     },
-    // Add this inside the actions: {} object in src/stores/authStore.js
+    
 
-    async loginWithGoogle(googleToken) {
-      this.loading = true;
-      this.error = null;
-      try {
-        // Send the Google token to our new backend route
-        const response = await axios.post('https://ecommerce-backend-fqtt.onrender.com/auth/google', {
-          token: googleToken
-        });
-        
-        this.user = response.data;
-        localStorage.setItem('token', response.data.token);
-        localStorage.setItem('user', JSON.stringify(response.data));
-        return true;
-      } catch (err) {
-        this.error = err.response?.data?.message || 'Google authentication failed';
-        return false;
-      } finally {
-        this.loading = false;
-      }
-    }
+async loginWithGoogle(googleToken) {
+  this.loading = true;
+  this.error = null;
+  try {
+    const response = await axios.post(`${API_URL}/auth/google`, {
+      token: googleToken
+    });
+    
+    this.user = response.data;
+    this.token = response.data.token;
+    localStorage.setItem('token', response.data.token);
+    localStorage.setItem('user', JSON.stringify(response.data));
+    return true;
+  } catch (err) {
+    this.error = err.response?.data?.message || 'Google authentication failed';
+    return false;
+  } finally {
+    this.loading = false;
+  }
+}
   }
 });

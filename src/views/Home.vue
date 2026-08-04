@@ -64,7 +64,7 @@
             </div>
             <h3 class="font-semibold text-gray-800 text-sm line-clamp-1">{{ product.name }}</h3>
             <div class="mt-2 flex items-baseline gap-2">
-              <span class="font-bold text-gray-900">GH₵{{ product.price.toFixed(2) }}</span>
+              <span class="font-bold text-gray-900">GH₵{{ product.price?.toFixed(2) }}</span>
               <span class="text-xs text-gray-400 line-through">GH₵{{ (product.price * 1.3).toFixed(2) }}</span>
             </div>
           </div>
@@ -98,7 +98,7 @@ const cartStore = useCartStore();
 const getImageUrl = (imagePath) => {
   if (!imagePath) return '';
   if (imagePath.startsWith('http')) return imagePath;
-  const baseUrl = import.meta.env.API_URL;
+  const baseUrl = (import.meta.env.VITE_API_URL || 'http://localhost:5000/api').replace(/\/api$/, '');
   return `${baseUrl}${imagePath}`;
 };
 

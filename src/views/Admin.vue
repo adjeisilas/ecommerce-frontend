@@ -126,7 +126,7 @@ const newProduct = reactive({
 const getImageUrl = (imagePath) => {
   if (!imagePath) return '';
   if (imagePath.startsWith('http')) return imagePath;
-  const baseUrl = import.meta.env.API_URL;
+  const baseUrl = (import.meta.env.VITE_API_URL || 'http://localhost:5000/api').replace(/\/api$/, '');
   return `${baseUrl}${imagePath}`;
 };
 

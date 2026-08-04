@@ -5,8 +5,8 @@
       <div class="relative hidden w-1/2 p-4 md:block">
         <div class="h-full w-full overflow-hidden rounded-2xl bg-gray-200 relative">
           <img 
-            src="/images/SignIn Image.jpg" 
-            alt="Sign In Image" 
+            src="/images/signin-image.jpg"
+            alt="Sign In"
             class="h-full w-full object-cover"
           />
           <div class="absolute top-6 left-6 flex items-center gap-2 text-white font-bold text-xl">
@@ -54,7 +54,7 @@
           </div>
 
         <div class="flex justify-center mb-6">
-          <GoogleLogin :callback="handleGoogleLogin" />
+          <GoogleAuthButton :callback="handleGoogleLogin" />
         </div>
 
 
@@ -70,6 +70,7 @@
 <script setup>
 import { reactive } from 'vue';
 import { useRouter } from 'vue-router';
+import GoogleAuthButton from '../components/GoogleAuthButton.vue';
 import { useAuthStore } from '../stores/authStore';
 
 const router = useRouter();
@@ -80,21 +81,26 @@ const formData = reactive({
   password: ''
 });
 
+// Centralized redirect helper based on user role
+const redirectUser = () => {
+  if (authStore.user?.role === 'admin') {
+    router.push('/admin');
+  } else {
+    router.push('/');
+  }
+};
+
 const handleSignIn = async () => {
   const success = await authStore.login(formData);
   if (success) {
-    if (authStore.user?.role === 'admin') {
-      router.push('/admin');
-    } else {
-      router.push('/'); 
-    }
+    redirectUser();
   }
 };
 
 const handleGoogleLogin = async (response) => {
   const success = await authStore.loginWithGoogle(response.credential);
   if (success) {
-    router.push('/');
+    redirectUser();
   }
 };
 </script>
