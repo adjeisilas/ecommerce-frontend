@@ -24,7 +24,11 @@
         <select class="bg-transparent text-sm text-gray-600 outline-none pr-3 border-r border-gray-300 cursor-pointer">
           <option>All Category</option>
         </select>
-        <input type="text" placeholder="Search product or brand here..." class="w-full bg-transparent px-4 text-sm outline-none" />
+        <input 
+    type="text" 
+    v-model="productStore.searchQuery" 
+    placeholder="Search products..." 
+    class="w-full bg-transparent px-4 text-sm outline-none"/>
         <button class="text-gray-500 hover:text-black transition">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -74,9 +78,11 @@ import { ref } from 'vue';
 import { useAuthStore } from '../stores/authStore';
 import { useCartStore } from '../stores/cartStore';
 import { useRouter } from 'vue-router';
+import { useProductStore } from '../stores/productStore';
 
 const authStore = useAuthStore();
 const cartStore = useCartStore();
+const productStore = useProductStore();
 const router = useRouter();
 const mobileMenuOpen = ref(false);
 

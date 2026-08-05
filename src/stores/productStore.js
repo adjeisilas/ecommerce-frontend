@@ -9,6 +9,7 @@ export const useProductStore = defineStore('product', {
     products: [],
     loading: false,
     error: null,
+    searchQuery: '',
   }),
   
   actions: {
@@ -73,3 +74,4 @@ async deleteProduct(productId) {
     
   }
 });
+
