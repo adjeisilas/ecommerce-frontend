@@ -15,7 +15,6 @@
     </div>
 
     <div class="flex items-center justify-between gap-4 py-2">
-      <!-- Logo -->
       <router-link to="/" class="flex items-center gap-2 font-bold text-xl sm:text-2xl">
         <span class="text-2xl sm:text-3xl">🍃</span> ADSTORE
       </router-link>
@@ -25,10 +24,12 @@
           <option>All Category</option>
         </select>
         <input 
-    type="text" 
-    v-model="productStore.searchQuery" 
-    placeholder="Search products..." 
-    class="w-full bg-transparent px-4 text-sm outline-none"/>
+          type="text" 
+          :value="productStore.searchQuery" 
+          @input="handleSearch"
+          placeholder="Search products..." 
+          class="w-full bg-transparent px-4 text-sm outline-none"
+        />
         <button class="text-gray-500 hover:text-black transition">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -53,8 +54,15 @@
       </div>
     </div>
 
+    <!-- Mobile Search Bar -->
     <div class="mt-2 flex md:hidden items-center rounded-full border border-gray-300 px-3 py-1.5 bg-gray-50">
-      <input type="text" placeholder="Search product..." class="w-full bg-transparent text-xs outline-none" />
+      <input 
+        type="text" 
+        :value="productStore.searchQuery" 
+        @input="handleSearch" 
+        placeholder="Search product..." 
+        class="w-full bg-transparent text-xs outline-none" 
+      />
       <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
       </svg>
@@ -67,7 +75,7 @@
         <router-link v-if="authStore.user.role === 'admin'" to="/admin" @click="mobileMenuOpen = false" class="text-blue-600 font-semibold">Admin Dashboard</router-link>
         <button @click="logout(); mobileMenuOpen = false" class="text-left text-red-500 font-semibold">Logout</button>
       </template>
-      <a href="#" class="text-gray-500">About Ecomora</a>
+      <a href="#" class="text-gray-500">About ADSTORE</a>
       <a href="#" class="text-gray-500">Help & Support</a>
     </div>
   </header>
@@ -77,14 +85,24 @@
 import { ref } from 'vue';
 import { useAuthStore } from '../stores/authStore';
 import { useCartStore } from '../stores/cartStore';
-import { useRouter } from 'vue-router';
 import { useProductStore } from '../stores/productStore';
+import { useRouter } from 'vue-router';
 
 const authStore = useAuthStore();
 const cartStore = useCartStore();
 const productStore = useProductStore();
 const router = useRouter();
+
 const mobileMenuOpen = ref(false);
+let searchTimer = null;
+
+const handleSearch = (event) => {
+  productStore.searchQuery = event.target.value;
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => {
+    productStore.fetchProducts();
+  }, 400);
+};
 
 const logout = () => {
   authStore.logout();

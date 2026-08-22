@@ -14,7 +14,7 @@
         </div>
 
         <div class="hidden md:flex gap-4 items-center z-10">
-          <div class="h-52 w-36 bg-white rounded-2xl shadow-xl p-2 rotate-[-6deg] overflow-hidden transition hover:rotate-0">
+          <div class="h-52 w-36 bg-white rounded-2xl shadow-xl p-2 -rotate-6 overflow-hidden transition hover:rotate-0">
             <img src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=300&auto=format&fit=crop&q=80" alt="Style Trend" class="h-full w-full object-cover rounded-xl" />
           </div>
           <div class="h-60 w-40 bg-white rounded-2xl shadow-2xl p-2 rotate-[4deg] overflow-hidden transition hover:rotate-0">
@@ -24,6 +24,7 @@
       </div>
     </section>
 
+    <!-- Category Circles -->
     <div class="flex items-center justify-center space-x-6 overflow-x-auto py-4 px-4">
       <div 
         v-for="cat in categoryStore.categories" 
@@ -34,7 +35,7 @@
         <div 
           :class="[
             'w-16 h-16 rounded-full overflow-hidden border-2 shadow-sm hover:scale-105 transition-transform',
-            selectedCategory === cat.name ? 'border-[#3b3632] border-4' : 'border-gray-200'
+            productStore.selectedCategory === cat.name ? 'border-[#3b3632] border-4' : 'border-gray-200'
           ]"
         >
           <img 
@@ -46,7 +47,7 @@
         <span 
           :class="[
             'mt-2 text-xs font-medium text-center',
-            selectedCategory === cat.name ? 'text-black font-extrabold' : 'text-gray-700'
+            productStore.selectedCategory === cat.name ? 'text-black font-extrabold' : 'text-gray-700'
           ]"
         >
           {{ cat.name }}
@@ -54,32 +55,37 @@
       </div>
     </div>
 
+    <!-- Products Container -->
     <section class="mx-auto max-w-7xl px-4 sm:px-8 py-8 mb-16">
       
       <div class="mb-6 flex flex-wrap items-center justify-between gap-4">
         <h2 class="text-2xl font-bold">
           <span v-if="productStore.searchQuery">Search Results for "{{ productStore.searchQuery }}"</span>
+          <span v-else-if="productStore.selectedCategory">{{ productStore.selectedCategory }}</span>
           <span v-else>Today's For You!</span>
         </h2>
         
-        <div v-if="!productStore.searchQuery" class="flex gap-2 bg-white p-1 rounded-full border border-gray-200 shadow-sm overflow-x-auto">
-          <button v-for="tab in ['Best Seller', 'Keep Stylish', 'Special Discount', 'Official Store']" :key="tab" class="px-4 py-1.5 text-xs font-semibold rounded-full transition hover:bg-black hover:text-white whitespace-nowrap">
-            {{ tab }}
+        <div class="flex gap-2">
+          <button 
+            v-if="productStore.searchQuery || productStore.selectedCategory" 
+            @click="clearFilters" 
+            class="text-sm text-red-500 hover:underline font-medium"
+          >
+            Clear Filters
           </button>
         </div>
-        <button v-if="productStore.searchQuery" @click="productStore.searchQuery = ''" class="text-sm text-red-500 hover:underline">
-          Clear Search
-        </button>
       </div>
 
-      <div v-if="productStore.loading" class="text-center py-12 text-gray-500">Loading products...</div>
-      <div v-else-if="productStore.error" class="text-center py-12 text-red-500">{{ productStore.error }}</div>
+      <div v-if="productStore.loading && productStore.products.length === 0" class="text-center py-12 text-gray-500">
+        Loading products...
+      </div>
+      
+      <div v-else-if="productStore.error" class="text-center py-12 text-red-500">
+        {{ productStore.error }}
+      </div>
 
       <div v-else-if="displayCategories.length > 0">
-        
         <div v-for="category in displayCategories" :key="category.name" class="mb-12">
-          
-          <!-- Category Header -->
           <h2 class="text-2xl font-bold text-[#3b3632] mb-6 flex items-center gap-3">
             {{ category.name }}
             <span class="text-xs font-medium text-gray-500 bg-gray-200 px-3 py-1 rounded-full">
@@ -88,7 +94,6 @@
           </h2>
           
           <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-5">
-            
             <div 
               v-for="product in category.products" 
               :key="product._id" 
@@ -116,8 +121,18 @@
                 </button>
               </div>
             </div>
-
           </div>
+        </div>
+
+        <!-- Load More Pagination Button -->
+        <div v-if="productStore.hasNextPage" class="mt-8 flex justify-center">
+          <button 
+            @click="productStore.fetchProducts(true)" 
+            :disabled="productStore.loading"
+            class="rounded-full border-2 border-black px-8 py-3 text-sm font-bold text-black transition hover:bg-black hover:text-white disabled:opacity-50"
+          >
+            {{ productStore.loading ? 'Loading...' : 'Load More Products' }}
+          </button>
         </div>
       </div>
 
@@ -130,7 +145,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { computed, onMounted } from 'vue';
 import Navbar from '../components/Navbar.vue';
 import { useProductStore } from '../stores/productStore';
 import { useCartStore } from '../stores/cartStore';
@@ -140,8 +155,6 @@ const productStore = useProductStore();
 const cartStore = useCartStore();
 const categoryStore = useCategoryStore();
 
-const selectedCategory = ref(null);
-
 const getImageUrl = (imagePath) => {
   if (!imagePath) return '';
   if (imagePath.startsWith('http')) return imagePath;
@@ -149,78 +162,50 @@ const getImageUrl = (imagePath) => {
   return `${baseUrl}${imagePath}`;
 };
 
-// --- DATA FETCHING ---
 onMounted(() => {
   categoryStore.fetchCategories();
   productStore.fetchProducts();
 });
 
-// --- FILTERING & REORDERING LOGIC ---
 const toggleCategory = (categoryName) => {
-  selectedCategory.value = selectedCategory.value === categoryName ? null : categoryName;
+  if (productStore.selectedCategory === categoryName) {
+    productStore.selectedCategory = null;
+  } else {
+    productStore.selectedCategory = categoryName;
+  }
+  productStore.fetchProducts();
 };
 
+const clearFilters = () => {
+  productStore.searchQuery = '';
+  productStore.selectedCategory = null;
+  productStore.fetchProducts();
+};
+
+// Group returned paginated products by category
 const displayCategories = computed(() => {
-  let grouped = categoryStore.categories.map(cat => {
-    let catProducts = productStore.products.filter(p => p.category === cat.name);
+  const groupedMap = new Map();
+  const productsList = productStore.products || [];
 
-    if (productStore.searchQuery && productStore.searchQuery.trim() !== '') {
-      const query = productStore.searchQuery.toLowerCase();
-      catProducts = catProducts.filter(p => p.name.toLowerCase().includes(query));
+  productsList.forEach(product => {
+    const catName = product.category || 'Uncategorized';
+    if (!groupedMap.has(catName)) {
+      groupedMap.set(catName, []);
     }
-
-    return {
-      name: cat.name,
-      products: catProducts
-    };
+    groupedMap.get(catName).push(product);
   });
 
-  grouped = grouped.filter(cat => cat.products.length > 0);
-
-  if (selectedCategory.value) {
-    grouped.sort((a, b) => {
-      if (a.name === selectedCategory.value) return -1;
-      if (b.name === selectedCategory.value) return 1;
-      return 0;
-    });
-  }
-
-  return grouped;
+  return Array.from(groupedMap.entries()).map(([name, products]) => ({
+    name,
+    products
+  }));
 });
 
 const handleAddToCart = (product) => {
   if (product.stock > 0) {
     cartStore.addToCart(product);
-    alert(`${product.name} added to cart!`);
   } else {
     alert('Sorry, this product is out of stock.');
   }
 };
-
-// --- COUNTDOWN LOGIC ---
-const hours = ref('08');
-const minutes = ref('17');
-const seconds = ref('56');
-let countdownInterval = null;
-
-onMounted(() => {
-  let totalSeconds = 8 * 3600 + 17 * 60 + 56;
-
-  countdownInterval = setInterval(() => {
-    if (totalSeconds > 0) {
-      totalSeconds--;
-      const h = Math.floor(totalSeconds / 3600);
-      const m = Math.floor((totalSeconds % 3600) / 60);
-      const s = totalSeconds % 60;
-
-      hours.value = String(h).padStart(2, '0');
-      minutes.value = String(m).padStart(2, '0');
-      seconds.value = String(s).padStart(2, '0');
-    }
-  }, 1000);
-});
-
-onUnmounted(() => {
-  if (countdownInterval) clearInterval(countdownInterval);
-});
 </script>

@@ -1,7 +1,6 @@
 <template>
   <div class="flex h-screen bg-slate-50 font-sans">
     
-    <!-- SIDEBAR -->
     <aside class="w-64 bg-[#0a1161] text-white flex flex-col shadow-xl z-20">
       <div class="p-6">
         <h2 class="text-2xl font-bold tracking-wide">E-Commerce Admin</h2>
@@ -38,17 +37,15 @@
       </div>
     </aside>
 
-    <!-- MAIN CONTENT -->
+
     <main class="flex-1 flex flex-col h-screen overflow-hidden">
-      <!-- Top Header Area (Optional, mimics the image search/date bar) -->
+    
       <header class="bg-white h-16 border-b flex items-center justify-between px-8 shadow-sm shrink-0">
         <div class="text-sm text-gray-500 font-medium">Dashboard / {{ activeTab === 'products' ? 'Products' : 'Categories' }}</div>
       </header>
 
-      <!-- Scrollable Content -->
       <div class="p-8 overflow-y-auto flex-1">
-        
-        <!-- ================= CATEGORIES VIEW ================= -->
+
         <div v-if="activeTab === 'categories'" class="max-w-6xl mx-auto space-y-6">
           <div class="flex justify-between items-end">
             <div>
@@ -89,7 +86,6 @@
           </div>
         </div>
 
-        <!-- ================= PRODUCTS VIEW ================= -->
         <div v-if="activeTab === 'products'" class="max-w-6xl mx-auto space-y-6">
           <div class="flex justify-between items-end">
             <div>
@@ -138,9 +134,6 @@
       </div>
     </main>
 
-    <!-- ================= MODALS ================= -->
-    
-    <!-- Add Category Modal -->
     <div v-if="showCategoryModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div class="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden">
         <div class="p-5 border-b flex justify-between items-center">
@@ -166,7 +159,7 @@
       </div>
     </div>
 
-    <!-- Add Product Modal -->
+
     <div v-if="showProductModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden">
         <div class="p-5 border-b flex justify-between items-center">
@@ -228,12 +221,10 @@ const categoryStore = useCategoryStore();
 const productStore = useProductStore();
 const authStore = useAuthStore();
 
-// UI State
-const activeTab = ref('products'); // Default tab
+const activeTab = ref('products');
 const showCategoryModal = ref(false);
 const showProductModal = ref(false);
 
-// Form State
 const categoryName = ref('');
 const categoryImageFile = ref(null);
 const productForm = reactive({ name: '', price: null, stock: null, category: '', description: '' });
@@ -241,10 +232,9 @@ const productImageFile = ref(null);
 
 onMounted(() => {
   categoryStore.fetchCategories();
-  productStore.fetchProducts(); // Assuming you have this action to populate the table
+  productStore.fetchProducts(); 
 });
 
-// Handlers
 const handleLogout = () => {
   authStore.logout();
   router.push('/signin');
@@ -263,7 +253,7 @@ const handleCategorySubmit = async () => {
   if (success) {
     categoryName.value = '';
     categoryImageFile.value = null;
-    showCategoryModal.value = false; // Close modal on success
+    showCategoryModal.value = false; 
   } else {
     alert(categoryStore.error);
   }
@@ -292,7 +282,7 @@ const handleProductSubmit = async () => {
   if (success) {
     Object.assign(productForm, { name: '', price: null, stock: null, category: '', description: '' });
     productImageFile.value = null;
-    showProductModal.value = false; // Close modal on success
+    showProductModal.value = false;
   } else {
     alert(productStore.error);
   }

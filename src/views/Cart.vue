@@ -39,7 +39,7 @@
           <div class="w-72">
             <div class="flex justify-between text-lg font-bold mb-6">
               <span>Total:</span>
-              <span>${{ cartStore.totalPrice.toFixed(2) }}</span>
+              <span>GHC{{ cartStore.totalPrice.toFixed(2) }}</span>
             </div>
             <router-link to="/checkout" class="block w-full text-center rounded-full bg-black py-4 text-sm font-bold text-white transition hover:bg-gray-800">
               Proceed to Checkout

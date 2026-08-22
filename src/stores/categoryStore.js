@@ -1,4 +1,3 @@
-// src/stores/categoryStore.js
 import { defineStore } from 'pinia';
 import axios from 'axios';
 import { useAuthStore } from './authStore';
@@ -59,7 +58,7 @@ export const useCategoryStore = defineStore('category', {
 
     await axios.delete(`${API_URL}/categories/${categoryId}`, config);
     
-    // Instantly remove it from the UI
+
     this.categories = this.categories.filter((cat) => cat._id !== categoryId);
     return true;
   } catch (err) {

@@ -1,6 +1,6 @@
 <template>
   <div class="flex min-h-screen items-center justify-center bg-[#5c4d43] p-6">
-    <div class="flex w-full max-w-5xl overflow-hidden rounded-[2rem] bg-[#fbf9f4] shadow-2xl">
+    <div class="flex w-full max-w-5xl overflow-hidden rounded-4xl bg-[#fbf9f4] shadow-2xl">
       
       <div class="relative hidden w-1/2 p-4 md:block">
         <div class="h-full w-full overflow-hidden rounded-2xl bg-gray-200 relative">
@@ -59,9 +59,9 @@
           </form>
 
           <div class="my-6 flex items-center text-sm text-gray-400">
-            <div class="h-px flex-grow bg-gray-300"></div>
+            <div class="h-px grow bg-gray-300"></div>
             <span class="px-4">Or Sign in with</span>
-            <div class="h-px flex-grow bg-gray-300"></div>
+            <div class="h-px grow bg-gray-300"></div>
           </div>
 
         <div class="flex justify-center mb-6">
