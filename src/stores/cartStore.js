@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import axios from "axios";
 import { useAuthStore } from "./authStore";
+import { useProductStore } from "./productStore";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
@@ -18,7 +19,7 @@ export const useCartStore = defineStore("cart", {
     totalPrice: (state) =>
       state.items.reduce(
         (total, item) => total + item.price * item.quantity,
-        0
+        0,
       ),
   },
 
@@ -73,7 +74,7 @@ export const useCartStore = defineStore("cart", {
       this.saveCart();
     },
 
-    async checkout() {
+    async checkout(shippingAddress) {
       if (this.items.length === 0) return false;
 
       this.loading = true;
@@ -84,9 +85,12 @@ export const useCartStore = defineStore("cart", {
 
         // Format cart payload for Paystack initialization
         const orderItems = this.items.map((item) => ({
+          product: item._id || item.id,
           _id: item._id || item.id,
           qty: Number(item.quantity || item.qty || 1),
+          quantity: Number(item.quantity || item.qty || 1),
           name: item.name,
+          image: item.image,
           price: item.price,
         }));
 
@@ -103,16 +107,14 @@ export const useCartStore = defineStore("cart", {
           {
             orderItems,
             email: authStore.user?.email,
+            shippingAddress,
             // Automatically grabs your current domain (e.g., http://localhost:5173/)
-            callbackUrl: `${window.location.origin}/`, 
+            callbackUrl: `${window.location.origin}/`,
           },
-          config
+          config,
         );
 
-        // 2. Clear local storage & cart state
-        this.clearCart();
-
-        // 3. Redirect user to Paystack's secure payment page
+        // 2. Redirect user to Paystack's secure payment page
         if (response.data?.authorization_url) {
           window.location.href = response.data.authorization_url;
           return true;
@@ -122,7 +124,38 @@ export const useCartStore = defineStore("cart", {
       } catch (err) {
         console.error("Paystack Checkout Error:", err);
         this.error =
-          err.response?.data?.message || "Payment initialization failed. Please try again.";
+          err.response?.data?.message ||
+          "Payment initialization failed. Please try again.";
+        return false;
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    async verifyPayment(reference) {
+      if (!reference) return false;
+
+      this.loading = true;
+      this.error = null;
+
+      try {
+        const authStore = useAuthStore();
+        const productStore = useProductStore();
+
+        const config = {
+          headers: {
+            Authorization: `Bearer ${authStore.token}`,
+          },
+        };
+
+        await axios.get(`${API_URL}/payments/verify/${reference}`, config);
+        this.clearCart();
+        await productStore.fetchProducts();
+        return true;
+      } catch (err) {
+        this.error =
+          err.response?.data?.message ||
+          "Payment verification failed. Please contact support if you were charged.";
         return false;
       } finally {
         this.loading = false;

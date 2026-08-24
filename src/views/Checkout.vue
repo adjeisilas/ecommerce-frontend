@@ -10,7 +10,9 @@
           <!-- Use @submit.prevent on the form to handle submission -->
           <form @submit.prevent="handlePlaceOrder" class="space-y-5">
             <div>
-              <label class="block text-sm font-medium text-gray-700">Street Address</label>
+              <label class="block text-sm font-medium text-gray-700"
+                >Street Address</label
+              >
               <input
                 v-model="shipping.address"
                 type="text"
@@ -21,7 +23,9 @@
 
             <div class="grid grid-cols-2 gap-5">
               <div>
-                <label class="block text-sm font-medium text-gray-700">City</label>
+                <label class="block text-sm font-medium text-gray-700"
+                  >City</label
+                >
                 <input
                   v-model="shipping.city"
                   type="text"
@@ -30,7 +34,9 @@
                 />
               </div>
               <div>
-                <label class="block text-sm font-medium text-gray-700">Postal Code</label>
+                <label class="block text-sm font-medium text-gray-700"
+                  >Postal Code</label
+                >
                 <input
                   v-model="shipping.postalCode"
                   type="text"
@@ -41,7 +47,9 @@
             </div>
 
             <div>
-              <label class="block text-sm font-medium text-gray-700">Country</label>
+              <label class="block text-sm font-medium text-gray-700"
+                >Country</label
+              >
               <input
                 v-model="shipping.country"
                 type="text"
@@ -61,7 +69,9 @@
               :disabled="isProcessing || cartStore.loading"
               class="w-full bg-black text-white py-3 rounded-lg font-bold disabled:opacity-50 transition-colors"
             >
-              <span v-if="isProcessing || cartStore.loading">Processing Secure Payment...</span>
+              <span v-if="isProcessing || cartStore.loading"
+                >Processing Secure Payment...</span
+              >
               <span v-else>Proceed to Payment</span>
             </button>
           </form>
@@ -77,8 +87,12 @@
               class="flex justify-between items-center py-2"
             >
               <div class="flex items-center gap-3">
-                <span class="text-sm font-medium text-gray-600">{{ item.quantity }}x</span>
-                <span class="text-sm font-semibold truncate w-32">{{ item.name }}</span>
+                <span class="text-sm font-medium text-gray-600"
+                  >{{ item.quantity }}x</span
+                >
+                <span class="text-sm font-semibold truncate w-32">{{
+                  item.name
+                }}</span>
               </div>
               <span class="text-sm font-medium text-gray-800"
                 >GH₵{{ (item.price * item.quantity).toFixed(2) }}</span
@@ -86,7 +100,9 @@
             </div>
           </div>
 
-          <div class="border-t border-gray-100 pt-4 flex justify-between text-lg font-bold">
+          <div
+            class="border-t border-gray-100 pt-4 flex justify-between text-lg font-bold"
+          >
             <span>Total</span>
             <span>GH₵{{ cartStore.totalPrice.toFixed(2) }}</span>
           </div>
@@ -131,12 +147,12 @@ const handlePlaceOrder = async () => {
 
   try {
     // Calls the Paystack initialization we built in cartStore
-    const success = await cartStore.checkout();
-    
+    const success = await cartStore.checkout({ ...shipping });
+
     if (!success && cartStore.error) {
       alert(cartStore.error);
     }
-    // Note: If successful, cartStore.checkout() automatically redirects the user 
+    // Note: If successful, cartStore.checkout() automatically redirects the user
     // to Paystack's URL using window.location.href, so we don't need a router.push here.
   } catch (err) {
     console.error("Unexpected checkout error:", err);
