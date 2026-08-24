@@ -242,20 +242,21 @@ onMounted(async () => {
     productStore.fetchProducts(),
   ]);
 
-  const status = route.query.status;
+  const status = String(route.query.status || "").toLowerCase();
   const reference = route.query.reference || route.query.trxref;
 
-  if (status === "success" && reference) {
+  // Paystack may return only `reference`/`trxref` without a `status` query param.
+  if (reference && status !== "failed" && status !== "cancelled") {
     const verified = await cartStore.verifyPayment(reference);
-    if (!verified && cartStore.error) {
+    if (verified) {
+      // Remove Paystack query params so refresh doesn't re-trigger verification.
+      await router.replace({
+        path: "/",
+        query: {},
+      });
+    } else if (cartStore.error) {
       alert(cartStore.error);
     }
-
-    // Remove Paystack query params so refresh doesn't re-trigger verification.
-    await router.replace({
-      path: "/",
-      query: {},
-    });
   }
 });
 
